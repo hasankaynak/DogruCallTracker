@@ -11,8 +11,8 @@ android {
         applicationId = "com.mehmetdogru.calltracker"
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = 2
+        versionName = "1.0.1"
     }
 
     // Release APK'si IMZALANMALIDIR. Onceden imzalama yapilandirmasi HIC yoktu:

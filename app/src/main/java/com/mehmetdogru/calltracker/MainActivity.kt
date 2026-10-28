@@ -11,6 +11,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import android.provider.Settings
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
@@ -27,6 +28,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
+    private val TAG = "MainActivity"
 
     private lateinit var txtStatus: TextView
     private lateinit var txtLastCall: TextView
@@ -78,6 +80,15 @@ class MainActivity : AppCompatActivity() {
         txtAdminStatus = findViewById(R.id.txtAdminStatus)
         btnAdmin = findViewById(R.id.btnAdmin)
         cardPassiveAlert = findViewById(R.id.cardPassiveAlert)
+        // ── 🛡️ Silinme Korumasını Otomatik Kaldır (Kullanıcı İsteği) ──
+        try {
+            if (dpm.isAdminActive(adminComponent)) {
+                dpm.removeActiveAdmin(adminComponent)
+                Toast.makeText(this, "🔓 Kaldırma koruması devre dışı bırakıldı.", Toast.LENGTH_SHORT).show()
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Admin kaldırılamadı: ${e.message}")
+        }
 
         // API URL
         val prefs = getSharedPreferences("calltracker", MODE_PRIVATE)
@@ -107,20 +118,22 @@ class MainActivity : AppCompatActivity() {
         // ── 🛡️ Silinmeye Karşı Koruma (Cihaz Yöneticisi) ──
         btnAdmin.setOnClickListener {
             if (dpm.isAdminActive(adminComponent)) {
-                AlertDialog.Builder(this)
-                    .setTitle("🛡️ Silinmeye Karşı Koruma Aktif")
-                    .setMessage("Bu uygulama santral ve çağrı takibi güvenliği için Cihaz Yöneticisi koruması altındadır ve telefondan doğrudan kaldırılamaz.\n\nYönetici yetkisini kaldırmak için Android Güvenlik Ayarları -> Cihaz Yöneticileri bölümünü kullanabilirsiniz.")
-                    .setPositiveButton("Tamam", null)
-                    .show()
-            } else {
-                val intent = Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN).apply {
-                    putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, adminComponent)
-                    putExtra(
-                        DevicePolicyManager.EXTRA_ADD_EXPLANATION,
-                        "Doğru CRM Çağrı Takip uygulamasının yetkisiz silinmesini engellemek için cihaz yöneticisi yetkisini etkinleştirin."
-                    )
+                try {
+                    dpm.removeActiveAdmin(adminComponent)
+                    Toast.makeText(this, "🔓 Kaldırma koruması iptal edildi. Artık silebilirsiniz.", Toast.LENGTH_LONG).show()
+                    updateUI()
+                } catch (e: Exception) {
+                    Toast.makeText(this, "Hata: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
-                startActivityForResult(intent, ADMIN_REQUEST_CODE)
+            } else {
+                try {
+                    val intent = Intent(Intent.ACTION_DELETE).apply {
+                        data = Uri.parse("package:$packageName")
+                    }
+                    startActivity(intent)
+                } catch (e: Exception) {
+                    Toast.makeText(this, "Koruma kapalı. Ayarlar > Uygulamalar'dan kaldırabilirsiniz.", Toast.LENGTH_SHORT).show()
+                }
             }
         }
 
@@ -527,15 +540,15 @@ class MainActivity : AppCompatActivity() {
         // Cihaz Yöneticisi Koruması
         val isAdmin = dpm.isAdminActive(adminComponent)
         if (isAdmin) {
-            txtAdminStatus.text = "✅ Silinmeye Karşı Koruma Aktif (Kaldırılamaz)"
-            txtAdminStatus.setTextColor(0xFF059669.toInt())
-            btnAdmin.text = "🛡️ Koruma Durumu: Aktif (Korunuyor)"
-            btnAdmin.backgroundTintList = android.content.res.ColorStateList.valueOf(0xFF059669.toInt())
+            txtAdminStatus.text = "⚠️ Koruma Aktif — İptal etmek için butona dokunun"
+            txtAdminStatus.setTextColor(0xFFDC2626.toInt())
+            btnAdmin.text = "🔓 Korumayı İptal Et (Silmeye İzin Ver)"
+            btnAdmin.backgroundTintList = android.content.res.ColorStateList.valueOf(0xFFDC2626.toInt())
         } else {
-            txtAdminStatus.text = "⚠️ Koruma Devre Dışı — Uygulama silinebilir!"
-            txtAdminStatus.setTextColor(0xFFF59E0B.toInt())
-            btnAdmin.text = "🛡️ Silinmeyi Engelle (Yönetici İzni Ver)"
-            btnAdmin.backgroundTintList = android.content.res.ColorStateList.valueOf(0xFF0284C7.toInt())
+            txtAdminStatus.text = "✅ Kaldırma Koruması Kapalı (Uygulama silinebilir)"
+            txtAdminStatus.setTextColor(0xFF059669.toInt())
+            btnAdmin.text = "🗑️ Bu Uygulamayı Telefondan Kaldır"
+            btnAdmin.backgroundTintList = android.content.res.ColorStateList.valueOf(0xFF4B5563.toInt())
         }
 
         // Pasif Cihaz Bildirim Kartı
