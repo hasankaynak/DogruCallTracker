@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  CT-013: Cihaz anahtari ve cagri kuyrugu yedeklenmemelidir.
+
+  allowBackup="false" ile birlikte, Android 12+ (API 31) uzerinde bulut yedegi ve
+  cihazdan cihaza aktarim da acikca kapatilir. Sirket telefonlarinda cihaz anahtari
+  cihaza ozeldir; baska bir cihaza tasinmasi dogru degildir — yonetici panelden
+  yeni anahtar uretip girer.
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="root" />
+        <exclude domain="database" />
+        <exclude domain="sharedpref" />
+        <exclude domain="file" />
+    </cloud-backup>
+    <device-transfer>
+        <exclude domain="root" />
+        <exclude domain="database" />
+        <exclude domain="sharedpref" />
+        <exclude domain="file" />
+    </device-transfer>
+</data-extraction-rules>

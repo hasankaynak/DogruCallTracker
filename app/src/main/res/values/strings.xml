@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Doğru CRM Çağrı Takip</string>
+    <string name="device_admin_description">Uygulamanın yetkisiz olarak telefondan silinmesini veya durdurulmasını engellemek için Cihaz Yöneticisi koruması.</string>
+</resources>
