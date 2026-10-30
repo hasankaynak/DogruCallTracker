@@ -417,7 +417,7 @@
                 android:id="@+id/txtAppVersionInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Sürüm: v1.0.0 (GitHub Entegre)"
+                android:text="Sürüm: v1.0.0"
                 android:textSize="13sp"
                 android:textColor="#E2E8F0"
                 android:textStyle="bold"
@@ -427,7 +427,7 @@
                 android:id="@+id/txtUpdateStatus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="GitHub Releases üzerinden güncellemeler otomatik denetlenir."
+                android:text="Uygulama güncellemeleri otomatik olarak denetlenir."
                 android:textSize="12sp"
                 android:textColor="#94A3B8"
                 android:layout_marginBottom="10dp" />

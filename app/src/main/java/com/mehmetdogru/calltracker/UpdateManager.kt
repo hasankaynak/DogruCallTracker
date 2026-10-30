@@ -68,7 +68,7 @@ object UpdateManager {
     fun checkForUpdates(activity: Activity, isManual: Boolean = false, onResult: ((Boolean) -> Unit)? = null) {
         Thread {
             try {
-                Log.d(TAG, "GitHub Releases kontrol ediliyor: $RELEASE_API_URL")
+                Log.d(TAG, "Güncellemeler kontrol ediliyor: $RELEASE_API_URL")
                 val request = Request.Builder()
                     .url(RELEASE_API_URL)
                     .header("Accept", "application/vnd.github.v3+json")
@@ -144,7 +144,7 @@ object UpdateManager {
         if (activity.isFinishing || activity.isDestroyed) return
 
         val msg = """
-            Yeni sürüm GitHub üzerinde yayınlandı!
+            Yeni sürüm yayınlandı!
             
             📌 Sürüm: v${info.latestVersion} (Mevcut: v${info.currentVersion})
             
@@ -161,12 +161,6 @@ object UpdateManager {
                 }
             }
             .setNegativeButton("Daha Sonra", null)
-            .setNeutralButton("GitHub'da Gör") { _, _ ->
-                try {
-                    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(info.htmlUrl))
-                    activity.startActivity(browserIntent)
-                } catch (_: Exception) {}
-            }
             .show()
     }
 
@@ -176,7 +170,7 @@ object UpdateManager {
     private fun downloadAndInstall(activity: Activity, apkUrl: String, newVersion: String) {
         val progressDialog = AlertDialog.Builder(activity)
             .setTitle("Güncelleme İndiriliyor")
-            .setMessage("Lütfen bekleyin, GitHub'dan yeni sürüm (v$newVersion) indiriliyor...")
+            .setMessage("Lütfen bekleyin, yeni sürüm (v$newVersion) indiriliyor...")
             .setCancelable(false)
             .create()
 
