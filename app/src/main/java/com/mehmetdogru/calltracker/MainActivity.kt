@@ -64,30 +64,47 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun isViewsBound(): Boolean {
+        return ::txtStatus.isInitialized && ::txtLastCall.isInitialized &&
+               ::txtCallCount.isInitialized && ::txtBatteryStatus.isInitialized &&
+               ::btnToggle.isInitialized && ::dpm.isInitialized &&
+               ::adminComponent.isInitialized && ::txtAdminStatus.isInitialized &&
+               ::btnAdmin.isInitialized && ::cardPassiveAlert.isInitialized
+    }
+
+    private fun bindViews(): Boolean {
+        return try {
+            txtStatus = findViewById(R.id.txtStatus) ?: return false
+            txtLastCall = findViewById(R.id.txtLastCall) ?: return false
+            txtCallCount = findViewById(R.id.txtCallCount) ?: return false
+            txtBatteryStatus = findViewById(R.id.txtBatteryStatus) ?: return false
+            btnToggle = findViewById(R.id.btnToggle) ?: return false
+
+            if (!::dpm.isInitialized) {
+                dpm = getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
+            }
+            if (!::adminComponent.isInitialized) {
+                adminComponent = ComponentName(this, CallTrackerAdminReceiver::class.java)
+            }
+
+            txtAdminStatus = findViewById(R.id.txtAdminStatus) ?: return false
+            btnAdmin = findViewById(R.id.btnAdmin) ?: return false
+            cardPassiveAlert = findViewById(R.id.cardPassiveAlert) ?: return false
+            true
+        } catch (e: Exception) {
+            Log.e("MainActivity", "bindViews error: " + e.message, e)
+            false
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        txtStatus = findViewById(R.id.txtStatus)
-        txtLastCall = findViewById(R.id.txtLastCall)
-        txtCallCount = findViewById(R.id.txtCallCount)
-        txtBatteryStatus = findViewById(R.id.txtBatteryStatus)
-        btnToggle = findViewById(R.id.btnToggle)
-
-        dpm = getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
-        adminComponent = ComponentName(this, CallTrackerAdminReceiver::class.java)
-
-        txtAdminStatus = findViewById(R.id.txtAdminStatus)
-        btnAdmin = findViewById(R.id.btnAdmin)
-        cardPassiveAlert = findViewById(R.id.cardPassiveAlert)
-        // ── 🛡️ Silinme Korumasını Otomatik Kaldır (Kullanıcı İsteği) ──
-        try {
-            if (dpm.isAdminActive(adminComponent)) {
-                dpm.removeActiveAdmin(adminComponent)
-                Toast.makeText(this, "🔓 Kaldırma koruması devre dışı bırakıldı.", Toast.LENGTH_SHORT).show()
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "Admin kaldırılamadı: ${e.message}")
+        bindViews()
+        // ── 🛡️ Silinmeye Karşı Cihaz Yöneticisi Kontrolü ──
+        if (!dpm.isAdminActive(adminComponent)) {
+            Log.i(TAG, "Cihaz yoneticisi henuz aktif degil.")
         }
 
         // API URL
@@ -97,7 +114,11 @@ class MainActivity : AppCompatActivity() {
 
         btnToggle.setOnClickListener {
             if (isServiceRunning()) {
-                stopCallService()
+                AlertDialog.Builder(this)
+                    .setTitle("🔒 Servis Durdurulamaz (Korumalı)")
+                    .setMessage("Şirket santral protokolü gereği çağrı takip servisi cihaz üzerinden durdurulamaz veya pasife alınamaz.\n\nPasife alma veya silme işlemleri yalnızca E-Katalog Ana Yönetim Paneli üzerinden yetkili yöneticiler tarafından gerçekleştirilebilir.")
+                    .setPositiveButton("Anladım", null)
+                    .show()
             } else {
                 checkPermissionsAndStart()
             }
@@ -118,22 +139,20 @@ class MainActivity : AppCompatActivity() {
         // ── 🛡️ Silinmeye Karşı Koruma (Cihaz Yöneticisi) ──
         btnAdmin.setOnClickListener {
             if (dpm.isAdminActive(adminComponent)) {
-                try {
-                    dpm.removeActiveAdmin(adminComponent)
-                    Toast.makeText(this, "🔓 Kaldırma koruması iptal edildi. Artık silebilirsiniz.", Toast.LENGTH_LONG).show()
-                    updateUI()
-                } catch (e: Exception) {
-                    Toast.makeText(this, "Hata: ${e.message}", Toast.LENGTH_SHORT).show()
-                }
+                AlertDialog.Builder(this)
+                    .setTitle("🛡️ Silinmeye Karşı Koruma Aktif")
+                    .setMessage("Bu uygulama şirket santral ve çağrı takibi güvenliği için Cihaz Yöneticisi koruması altındadır ve personeller tarafından telefondan kaldırılamaz.\n\nKaldırma veya servis değişikliği işlemleri yalnızca E-Katalog Ana Yönetim Paneli üzerinden gerçekleştirilebilir.")
+                    .setPositiveButton("Anladım", null)
+                    .show()
             } else {
-                try {
-                    val intent = Intent(Intent.ACTION_DELETE).apply {
-                        data = Uri.parse("package:$packageName")
-                    }
-                    startActivity(intent)
-                } catch (e: Exception) {
-                    Toast.makeText(this, "Koruma kapalı. Ayarlar > Uygulamalar'dan kaldırabilirsiniz.", Toast.LENGTH_SHORT).show()
+                val intent = Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN).apply {
+                    putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, adminComponent)
+                    putExtra(
+                        DevicePolicyManager.EXTRA_ADD_EXPLANATION,
+                        "Doğru CRM Çağrı Takip uygulamasının yetkisiz silinmesini engellemek için cihaz yöneticisi yetkisini etkinleştirin."
+                    )
                 }
+                startActivityForResult(intent, ADMIN_REQUEST_CODE)
             }
         }
 
@@ -224,6 +243,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        if (!isViewsBound()) {
+            bindViews()
+        }
         updateUI()
         refreshQueueStatus()
         ApiService.drainQueue(this)
@@ -517,6 +539,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateUI() {
+        if (!isViewsBound()) {
+            if (!bindViews()) return
+        }
         val prefs = getSharedPreferences("calltracker", MODE_PRIVATE)
         val running = prefs.getBoolean("service_running", false)
         val lastCall = prefs.getString("last_call", "Henüz çağrı algılanmadı")
@@ -527,7 +552,7 @@ class MainActivity : AppCompatActivity() {
         txtStatus.setTextColor(if (running) 0xFF059669.toInt() else 0xFFDC2626.toInt())
         txtLastCall.text = lastCall
         txtCallCount.text = "Toplam: $callCount çağrı algılandı"
-        btnToggle.text = if (running) "⏹ Servisi Durdur" else "▶ Servisi Başlat"
+        btnToggle.text = if (running) "🔒 Servis Aktif (Merkezi Korumalı)" else "▶ Servisi Başlat"
 
         // Pil durumu
         txtBatteryStatus.text = if (batteryIgnored) {
@@ -540,15 +565,15 @@ class MainActivity : AppCompatActivity() {
         // Cihaz Yöneticisi Koruması
         val isAdmin = dpm.isAdminActive(adminComponent)
         if (isAdmin) {
-            txtAdminStatus.text = "⚠️ Koruma Aktif — İptal etmek için butona dokunun"
-            txtAdminStatus.setTextColor(0xFFDC2626.toInt())
-            btnAdmin.text = "🔓 Korumayı İptal Et (Silmeye İzin Ver)"
-            btnAdmin.backgroundTintList = android.content.res.ColorStateList.valueOf(0xFFDC2626.toInt())
-        } else {
-            txtAdminStatus.text = "✅ Kaldırma Koruması Kapalı (Uygulama silinebilir)"
+            txtAdminStatus.text = "🛡️ Silinmeye Karşı Koruma Aktif (Kaldırılamaz)"
             txtAdminStatus.setTextColor(0xFF059669.toInt())
-            btnAdmin.text = "🗑️ Bu Uygulamayı Telefondan Kaldır"
-            btnAdmin.backgroundTintList = android.content.res.ColorStateList.valueOf(0xFF4B5563.toInt())
+            btnAdmin.text = "🛡️ Silinme Koruması Aktif (Korumalı)"
+            btnAdmin.backgroundTintList = android.content.res.ColorStateList.valueOf(0xFF059669.toInt())
+        } else {
+            txtAdminStatus.text = "⚠️ Silinme Koruması Pasif — Lütfen etkinleştirin"
+            txtAdminStatus.setTextColor(0xFFF59E0B.toInt())
+            btnAdmin.text = "🛡️ Silinme Korumasını Etkinleştir"
+            btnAdmin.backgroundTintList = android.content.res.ColorStateList.valueOf(0xFF4F46E5.toInt())
         }
 
         // Pasif Cihaz Bildirim Kartı
