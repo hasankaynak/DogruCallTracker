@@ -11,9 +11,8 @@ android {
         applicationId = "com.mehmetdogru.calltracker"
         minSdk = 26
         targetSdk = 34
-        versionCode = 151
-        versionName = "1.5.1"
-    }
+        versionCode = 202
+        versionName = "2.0.2"    }
 
     // Release APK'si IMZALANMALIDIR. Onceden imzalama yapilandirmasi HIC yoktu:
     // "assembleRelease" app-release-unsigned.apk uretiyordu ve Android imzasiz
@@ -63,3 +62,4 @@ dependencies {
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 }
+

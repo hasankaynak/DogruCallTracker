@@ -44,6 +44,7 @@ class CallDetectorService : Service() {
     private val heartbeatRunnable = object : Runnable {
         override fun run() {
             checkDeviceActiveStatus()
+            checkLocalOfflineMissedCalls()
             heartbeatHandler.postDelayed(this, 120_000L) // 2 dakikada bir kontrol
         }
     }
@@ -217,11 +218,18 @@ class CallDetectorService : Service() {
                 callStartTime = System.currentTimeMillis()
                 if (lastCallState != TelephonyManager.CALL_STATE_RINGING) {
                     isIncoming = false
+                    // Giden arama basladiysa bu numaraya ait cevapsiz bildirimini hemen kapat
+                    lastNumber?.let {
+                        NotificationHelper.cancelUnreturnedCallNotification(this, it)
+                        removeLocalMissedCall(it)
+                    }
                 }
                 // Çağrı cevalanıyor → API'ye bildir → masaüstünde süre sayacı başlar
                 if (isIncoming && !lastNumber.isNullOrEmpty()) {
                     Log.d(TAG, "📱 Çağrı cevaplanıyor → API bildirim: ${mask(lastNumber)}")
                     ApiService.sendCallAnswered(this, lastNumber!!, "GSM")
+                    NotificationHelper.cancelUnreturnedCallNotification(this, lastNumber!!)
+                    removeLocalMissedCall(lastNumber!!)
                 }
                 Log.d(TAG, "📱 Çağrı cevaplanıdı")
             }
@@ -259,6 +267,8 @@ class CallDetectorService : Service() {
                         }
                         Log.d(TAG, "📤 GİDEN çağrı bitti — ${duration}sn — ${mask(lastNumber)}")
                         if (!lastNumber.isNullOrEmpty()) {
+                            NotificationHelper.cancelUnreturnedCallNotification(this, lastNumber!!)
+                            removeLocalMissedCall(lastNumber!!)
                             ApiService.sendOutgoingCall(this, lastNumber!!, duration, "GSM")
                         }
                     }
@@ -286,6 +296,7 @@ class CallDetectorService : Service() {
                     Log.d(TAG, "📵 Cevapsız çağrı: ${mask(lastNumber)}")
                     if (!lastNumber.isNullOrEmpty()) {
                         val targetNum = lastNumber!!
+                        saveLocalMissedCall(targetNum, System.currentTimeMillis())
                         ApiService.sendMissedCall(this, targetNum, "GSM")
 
                         val time = java.text.SimpleDateFormat("HH:mm:ss", java.util.Locale.getDefault()).format(java.util.Date())
@@ -628,6 +639,94 @@ class CallDetectorService : Service() {
                 lockscreenVisibility = Notification.VISIBILITY_PUBLIC
             }
             getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
+        }
+    }
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // 1 SAATTİR DÖNÜŞ YAPILMAYAN CEVAPSIZ ÇAĞRILARIN ÇEVRİMDIŞI / YEREL TAKİBİ
+    // ══════════════════════════════════════════════════════════════════════════
+
+    private fun saveLocalMissedCall(phone: String, timestamp: Long) {
+        if (phone.isBlank()) return
+        try {
+            val prefs = getSharedPreferences("calltracker_offline_missed", MODE_PRIVATE)
+            val jsonStr = prefs.getString("missed_map", "{}") ?: "{}"
+            val map = org.json.JSONObject(jsonStr)
+            val item = org.json.JSONObject().apply {
+                put("time", timestamp)
+                put("notified", false)
+            }
+            map.put(phone, item)
+            prefs.edit().putString("missed_map", map.toString()).apply()
+            Log.d(TAG, "Yerel cevapsiz cagri kaydedildi: $phone")
+        } catch (e: Exception) {
+            Log.e(TAG, "saveLocalMissedCall hatasi: ${e.message}")
+        }
+    }
+
+    private fun removeLocalMissedCall(phone: String) {
+        if (phone.isBlank()) return
+        try {
+            val prefs = getSharedPreferences("calltracker_offline_missed", MODE_PRIVATE)
+            val jsonStr = prefs.getString("missed_map", "{}") ?: "{}"
+            val map = org.json.JSONObject(jsonStr)
+            if (map.has(phone)) {
+                map.remove(phone)
+                prefs.edit().putString("missed_map", map.toString()).apply()
+                Log.d(TAG, "Yerel cevapsiz cagri kaldirildi: $phone")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "removeLocalMissedCall hatasi: ${e.message}")
+        }
+    }
+
+    private fun checkLocalOfflineMissedCalls() {
+        try {
+            val prefs = getSharedPreferences("calltracker_offline_missed", MODE_PRIVATE)
+            val jsonStr = prefs.getString("missed_map", "{}") ?: "{}"
+            val map = org.json.JSONObject(jsonStr)
+            val now = System.currentTimeMillis()
+            val oneHourMs = 60 * 60 * 1000L
+            val twoDaysMs = 48 * 60 * 60 * 1000L
+            var changed = false
+
+            val keys = map.keys()
+            val keysToRemove = mutableListOf<String>()
+
+            while (keys.hasNext()) {
+                val phone = keys.next()
+                val item = map.getJSONObject(phone)
+                val time = item.optLong("time", 0L)
+                val notified = item.optBoolean("notified", false)
+                val elapsed = now - time
+
+                if (elapsed > twoDaysMs) {
+                    keysToRemove.add(phone)
+                    changed = true
+                } else if (elapsed >= oneHourMs && !notified) {
+                    val hours = (elapsed / (60 * 60 * 1000L)).toInt()
+                    val elapsedText = if (hours <= 1) "1 saattir" else "$hours saattir"
+                    NotificationHelper.showUnreturnedCallNotification(
+                        context = this,
+                        phoneNumber = phone,
+                        callerName = null,
+                        elapsedText = elapsedText,
+                        customMessage = "Bu numaraya $elapsedText dönüş yapılmadı: $phone"
+                    )
+                    item.put("notified", true)
+                    changed = true
+                }
+            }
+
+            for (k in keysToRemove) {
+                map.remove(k)
+            }
+
+            if (changed) {
+                prefs.edit().putString("missed_map", map.toString()).apply()
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "checkLocalOfflineMissedCalls hatasi: ${e.message}")
         }
     }
 }

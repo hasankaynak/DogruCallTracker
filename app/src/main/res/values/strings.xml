@@ -2,4 +2,5 @@
 <resources>
     <string name="app_name">Doğru CRM Çağrı Takip</string>
     <string name="device_admin_description">Uygulamanın yetkisiz olarak telefondan silinmesini veya durdurulmasını engellemek için Cihaz Yöneticisi koruması.</string>
+    <string name="auto_install_service_description">Doğru CRM güncellemelerini kullanıcı etkileşimi gerekmeden arka planda otomatik olarak kurar.</string>
 </resources>

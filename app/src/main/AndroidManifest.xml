@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <!-- CT-002: Ağ geri geldiğinde offline kuyruğu boşaltmak için (normal izin, runtime onayı gerektirmez) -->
+    <!-- CT-002: Ağ geri geldiğinde offline kuyruğu boşaltmak için -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     
     <!-- Arka plan servisi izinleri -->
@@ -66,7 +66,7 @@
             </intent-filter>
         </receiver>
 
-        <!-- Boot receiver — telefon açılınca servisi başlat -->
+        <!-- Boot receiver & Güncelleme sonrası otomatik başlatıcı -->
         <receiver
             android:name=".BootReceiver"
             android:exported="true"
@@ -76,7 +76,17 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
                 <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
                 <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Sessiz Paket Kurulum Sonuç Alıcısı -->
+        <receiver
+            android:name=".SilentInstallReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.mehmetdogru.calltracker.INSTALL_STATUS" />
             </intent-filter>
         </receiver>
 
@@ -84,12 +94,28 @@
         <service android:name=".WhatsAppCallListenerService"
                  android:label="WhatsApp Arama Yakalayıcı"
                  android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
+                 tools:ignore="ExportedService"
                  android:exported="true">
             <intent-filter>
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
         </service>
-            <!-- Cihaz Yöneticisi (Uygulamanın kaldırılmasını engeller) -->
+
+        <!-- Otomatik Kurulum Erişilebilirlik Hizmeti (Auto-Clicker Fallback) -->
+        <service
+            android:name=".AutoInstallAccessibilityService"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
+            android:label="Doğru CRM Otomatik Güncelleyici"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/auto_install_service_config" />
+        </service>
+
+        <!-- Cihaz Yöneticisi (Uygulamanın kaldırılmasını engeller) -->
         <receiver
             android:name=".CallTrackerAdminReceiver"
             android:label="Doğru CRM Çağrı Koruma"
@@ -104,7 +130,7 @@
             </intent-filter>
         </receiver>
 
-        <!-- GitHub Otomatik Guncelleyici FileProvider -->
+        <!-- FileProvider -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"

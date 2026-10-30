@@ -322,8 +322,53 @@ object ApiService {
                     client.newCall(request).execute().use { response ->
                         when (response.code) {
                             in 200..299 -> {
+                                val bodyStr = response.body?.string()
                                 context.getSharedPreferences("calltracker", Context.MODE_PRIVATE)
                                     .edit().putBoolean("is_device_passive", false).apply()
+
+                                if (!bodyStr.isNullOrBlank()) {
+                                    try {
+                                        val json = JSONObject(bodyStr)
+                                        if (json.has("unreturned_alerts")) {
+                                            val alertsArray = json.getJSONArray("unreturned_alerts")
+                                            val alertsList = mutableListOf<NotificationHelper.UnreturnedAlert>()
+                                            for (i in 0 until alertsArray.length()) {
+                                                val item = alertsArray.getJSONObject(i)
+                                                val pNum = item.getString("phone_number")
+                                                val cName = if (item.isNull("caller_name")) null else item.optString("caller_name")
+                                                val elText = item.optString("elapsed_text", "1 saattir")
+                                                val msg = item.optString("message", "")
+                                                alertsList.add(
+                                                    NotificationHelper.UnreturnedAlert(
+                                                        phoneNumber = pNum,
+                                                        callerName = cName,
+                                                        elapsedText = elText,
+                                                        message = msg
+                                                    )
+                                                )
+                                            }
+                                            NotificationHelper.syncUnreturnedAlerts(context, alertsList)
+                                        }
+
+                                        // Otomatik Arka Plan Guncelleme Kontrolu (Dokunmadan Kurulum)
+                                        val latestVersionCode = json.optInt("latest_version_code", 0)
+                                        val latestVersionName = json.optString("latest_version", "")
+                                        val updateUrl = json.optString("update_url", "")
+                                        val autoUpdate = json.optBoolean("auto_update", true)
+
+                                        if (autoUpdate && updateUrl.isNotBlank()) {
+                                            BackgroundUpdateManager.checkAndStartSilentUpdate(
+                                                context = context,
+                                                updateUrl = updateUrl,
+                                                newVersionName = latestVersionName,
+                                                newVersionCode = latestVersionCode
+                                            )
+                                        }
+                                    } catch (ex: Exception) {
+                                        Log.w(TAG, "Unreturned alerts parse hatasi: ${ex.message}")
+                                    }
+                                }
+
                                 true to "Cihaz anahtarı geçerli ve aktif."
                             }
                             403 -> {
