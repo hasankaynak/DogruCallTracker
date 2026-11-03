@@ -1,9 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <!-- Apple Human Interface Guidelines - System Dark Palette -->
+    <color name="apple_background">#000000</color>
+    <color name="apple_secondary_background">#1C1C1E</color>
+    <color name="apple_tertiary_background">#2C2C2E</color>
+    <color name="apple_elevated_background">#242426</color>
+    <color name="apple_separator">#38383A</color>
+    
+    <!-- Apple Dynamic Tints (Dark Mode) -->
+    <color name="apple_blue">#0A84FF</color>
+    <color name="apple_blue_tint">#1A2B42</color>
+    <color name="apple_green">#30D158</color>
+    <color name="apple_green_tint">#173822</color>
+    <color name="apple_red">#FF453A</color>
+    <color name="apple_red_tint">#381D1D</color>
+    <color name="apple_orange">#FF9F0A</color>
+    <color name="apple_orange_tint">#38240D</color>
+    <color name="apple_indigo">#5E5CE6</color>
+    <color name="apple_teal">#40C8E0</color>
+    
+    <!-- Apple Text Label Hierarchy -->
+    <color name="apple_label_primary">#FFFFFF</color>
+    <color name="apple_label_secondary">#8E8E93</color>
+    <color name="apple_label_tertiary">#636366</color>
+    <color name="apple_label_quaternary">#48484A</color>
+
+    <!-- Theme Compatibility -->
+    <color name="colorPrimary">#0A84FF</color>
+    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorAccent">#30D158</color>
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
 </resources>

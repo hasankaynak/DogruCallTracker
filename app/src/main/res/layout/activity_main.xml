@@ -2,33 +2,53 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0F172A">
+    android:background="@color/apple_background"
+    android:overScrollMode="never">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="28dp"
+        android:paddingBottom="40dp">
 
-        <!-- Logo -->
-        <TextView
+        <!-- ═══  BRAND & LARGE TITLE HEADER (Apple HIG Navigation Style) ═══ -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="📞 Doğru CRM"
-            android:textSize="26sp"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:layout_marginBottom="2dp" />
+            android:orientation="vertical"
+            android:layout_marginBottom="24dp">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Çağrı Takip Servisi &amp; Santral Entegrasyonu"
-            android:textSize="13sp"
-            android:textColor="#94A3B8"
-            android:gravity="center"
-            android:layout_marginBottom="20dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="DOĞRU TİCARET"
+                android:textSize="11sp"
+                android:textColor="@color/apple_label_secondary"
+                android:textStyle="bold"
+                android:letterSpacing="0.14"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Kurumsal Çağrı"
+                android:textSize="30sp"
+                android:textColor="@color/apple_label_primary"
+                android:textStyle="bold"
+                android:letterSpacing="-0.02"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Santral Entegrasyonu ve Arka Plan Takip Servisi"
+                android:textSize="13sp"
+                android:textColor="@color/apple_label_secondary"
+                android:lineSpacingMultiplier="1.2" />
+        </LinearLayout>
 
         <!-- ═══ 🔴 DİKKAT: CİHAZ PASİFE ALINDI UYARI KARTI ═══ -->
         <LinearLayout
@@ -37,101 +57,356 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:background="@drawable/card_bg"
-            android:backgroundTint="#7F1D1D"
-            android:padding="16dp"
+            android:backgroundTint="@color/apple_red_tint"
+            android:padding="18dp"
             android:layout_marginBottom="16dp"
             android:visibility="gone">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="🔴 DİKKAT: CİHAZ CRM'DEN PASİFE ALINDI!"
-                android:textSize="15sp"
-                android:textColor="#FEE2E2"
+                android:text="CİHAZ CRM'DEN PASİFE ALINDI"
+                android:textSize="14sp"
+                android:textColor="@color/apple_red"
                 android:textStyle="bold"
-                android:layout_marginBottom="4dp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Bu cihaz CRM yönetim panelinden pasif duruma getirilmiştir. Aramalar sisteme işlenmeyecektir. Lütfen şirket yöneticiniz ile iletişime geçin."
-                android:textSize="12sp"
-                android:textColor="#FCA5A5"
-                android:lineSpacingMultiplier="1.2" />
-        </LinearLayout>
-
-        <!-- ═══ 📷 QR KOD İLE HIZLI EŞLEŞTİRME KARTI ═══ -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@drawable/card_bg"
-            android:padding="18dp"
-            android:layout_marginBottom="16dp">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="📷 HIZLI KURULUM (QR KOD)"
-                android:textSize="11sp"
-                android:textColor="#94A3B8"
-                android:letterSpacing="0.1"
+                android:letterSpacing="0.04"
                 android:layout_marginBottom="6dp" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="CRM ekranındaki Cihaz QR kodunu kamerayla okutarak URL ve anahtarı tek tıkla otomatik tanımlayın."
-                android:textSize="12sp"
+                android:text="Bu cihaz yönetim panelinden pasif duruma getirilmiştir. Aramalar sunucuya işlenmeyecektir. Lütfen şirket yöneticiniz ile iletişime geçin."
+                android:textSize="12.5sp"
+                android:textColor="#FCA5A5"
+                android:lineSpacingMultiplier="1.25" />
+        </LinearLayout>
+
+        <!-- ═══ 🔒  E-KATALOG YÖNETİCİ KİLİDİ UYARI KARTI ═══ -->
+        <LinearLayout
+            android:id="@+id/cardUiLocked"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/card_bg"
+            android:backgroundTint="@color/apple_blue_tint"
+            android:padding="18dp"
+            android:layout_marginBottom="16dp"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="YÖNETİCİ KİLİDİ AKTİF"
+                    android:textSize="13sp"
+                    android:textColor="@color/apple_blue"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.06" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="E-Katalog Korumalı"
+                    android:textSize="10sp"
+                    android:textColor="@color/apple_label_secondary"
+                    android:background="@drawable/pill_chip"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:paddingTop="3dp"
+                    android:paddingBottom="3dp" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Bu cihazın kurulumu onaylanmış ve yönetim panelinden kilitlenmiştir. Personel müdahalesini engellemek için butonlar devre dışıdır. Kilit yalnızca yönetim panelinden açılabilir."
+                android:textSize="12.5sp"
                 android:textColor="#CBD5E1"
-                android:lineSpacingMultiplier="1.2"
-                android:layout_marginBottom="12dp" />
+                android:lineSpacingMultiplier="1.25" />
+        </LinearLayout>
+
+        <!-- ═══  HERO SERVICE STATUS CARD (Apple Grouped Inset Card) ═══ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/card_bg"
+            android:padding="20dp"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="SERVİS ÇALIŞMA DURUMU"
+                android:textSize="11sp"
+                android:textColor="@color/apple_label_secondary"
+                android:textStyle="bold"
+                android:letterSpacing="0.12"
+                android:layout_marginBottom="10dp" />
+
+            <TextView
+                android:id="@+id/txtStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="DURDURULDU"
+                android:textSize="20sp"
+                android:textColor="@color/apple_red"
+                android:textStyle="bold"
+                android:layout_marginBottom="16dp" />
+
+            <Button
+                android:id="@+id/btnToggle"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:text="▶ Servisi Başlat"
+                android:textSize="15sp"
+                android:textColor="@color/apple_label_primary"
+                android:textStyle="bold"
+                android:backgroundTint="@color/apple_blue"
+                android:stateListAnimator="@null" />
+        </LinearLayout>
+
+        <!-- ═══  TELEMETRY & LIVE METRICS CARD (Apple Health Inset Style) ═══ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/card_bg"
+            android:padding="20dp"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="CANLI VERİLER VE İSTATİSTİKLER"
+                android:textSize="11sp"
+                android:textColor="@color/apple_label_secondary"
+                android:textStyle="bold"
+                android:letterSpacing="0.12"
+                android:layout_marginBottom="14dp" />
+
+            <!-- Row 1: Toplam Çağrı & Kuyruk -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="14dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:background="@drawable/pill_chip"
+                    android:padding="12dp"
+                    android:layout_marginEnd="6dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="TOPLAM ÇAĞRI"
+                        android:textSize="10sp"
+                        android:textColor="@color/apple_label_secondary"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.08"
+                        android:layout_marginBottom="4dp" />
+
+                    <TextView
+                        android:id="@+id/txtCallCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0 çağrı"
+                        android:textSize="15sp"
+                        android:textColor="@color/apple_label_primary"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:background="@drawable/pill_chip"
+                    android:padding="12dp"
+                    android:layout_marginStart="6dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="SENKRONİZASYON"
+                        android:textSize="10sp"
+                        android:textColor="@color/apple_label_secondary"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.08"
+                        android:layout_marginBottom="4dp" />
+
+                    <TextView
+                        android:id="@+id/txtQueueStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Kuyruk boş"
+                        android:textSize="13sp"
+                        android:textColor="@color/apple_green"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Row 2: Son Arama -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/pill_chip"
+                android:padding="12dp"
+                android:layout_marginBottom="12dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="SON ALGILANAN ARAMA"
+                    android:textSize="10sp"
+                    android:textColor="@color/apple_label_secondary"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.08"
+                    android:layout_marginBottom="4dp" />
+
+                <TextView
+                    android:id="@+id/txtLastCall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Henüz çağrı algılanmadı"
+                    android:textSize="13sp"
+                    android:textColor="@color/apple_label_primary" />
+            </LinearLayout>
+
+            <!-- Row 3: Pil Durumu -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/pill_chip"
+                android:padding="12dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="PİL OPTİMİZASYON DURUMU"
+                    android:textSize="10sp"
+                    android:textColor="@color/apple_label_secondary"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.08"
+                    android:layout_marginBottom="4dp" />
+
+                <TextView
+                    android:id="@+id/txtBatteryStatus"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Kontrol ediliyor..."
+                    android:textSize="13sp"
+                    android:textColor="@color/apple_orange" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- ═══  QUICK QR SETUP CARD (Apple Camera Card) ═══ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/card_bg"
+            android:padding="20dp"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="HIZLI KURULUM"
+                android:textSize="11sp"
+                android:textColor="@color/apple_label_secondary"
+                android:textStyle="bold"
+                android:letterSpacing="0.12"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Kamerayla QR Kod Eşleme"
+                android:textSize="17sp"
+                android:textColor="@color/apple_label_primary"
+                android:textStyle="bold"
+                android:layout_marginBottom="6dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Yönetim panelindeki cihaz QR kodunu kamerayla okutarak sunucu adresini ve cihaz anahtarını anında otomatik yapılandırın."
+                android:textSize="12.5sp"
+                android:textColor="@color/apple_label_secondary"
+                android:lineSpacingMultiplier="1.25"
+                android:layout_marginBottom="16dp" />
 
             <Button
                 android:id="@+id/btnScanQr"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:text="📷 QR KOD TARA &amp; EŞLEŞTİR"
+                android:text="📷 QR Kodu Tara &amp; Eşleştir"
                 android:textSize="14sp"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/apple_label_primary"
                 android:textStyle="bold"
-                android:backgroundTint="#059669" />
+                android:backgroundTint="@color/apple_blue"
+                android:stateListAnimator="@null" />
         </LinearLayout>
 
-        <!-- ═══ 🛡️ SİLİNMEYE KARŞI KORUMA KARTI (Cihaz Yöneticisi) ═══ -->
+        <!-- ═══  SYSTEM SECURITY & PERMISSIONS CARD ═══ -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:background="@drawable/card_bg"
-            android:padding="18dp"
+            android:padding="20dp"
             android:layout_marginBottom="16dp">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="🛡️ SİLİNMEYE KARŞI KORUMA"
+                android:text="GÜVENLİK VE SİSTEM İZİNLERİ"
                 android:textSize="11sp"
-                android:textColor="#94A3B8"
-                android:letterSpacing="0.1"
-                android:layout_marginBottom="6dp" />
+                android:textColor="@color/apple_label_secondary"
+                android:textStyle="bold"
+                android:letterSpacing="0.12"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Silinmeye Karşı Cihaz Yöneticisi -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Silinmeye Karşı Koruma"
+                android:textSize="15sp"
+                android:textColor="@color/apple_label_primary"
+                android:textStyle="bold"
+                android:layout_marginBottom="4dp" />
 
             <TextView
                 android:id="@+id/txtAdminStatus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="⚠️ Koruma devre dışı — Uygulama silinebilir!"
+                android:text="Koruma durumu denetleniyor..."
                 android:textSize="13sp"
-                android:textColor="#F59E0B"
-                android:textStyle="bold"
+                android:textColor="@color/apple_orange"
                 android:layout_marginBottom="4dp" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Cihaz Yöneticisi aktifken telefon kullanıcıları ve personeller uygulamayı ayarlardan veya ana ekrandan silemez."
+                android:text="Cihaz Yöneticisi aktif edildiğinde kullanıcıların ve personellerin uygulamayı telefondan silmesi engellenir."
                 android:textSize="12sp"
-                android:textColor="#64748B"
+                android:textColor="@color/apple_label_tertiary"
                 android:lineSpacingMultiplier="1.2"
                 android:layout_marginBottom="12dp" />
 
@@ -139,150 +414,78 @@
                 android:id="@+id/btnAdmin"
                 android:layout_width="match_parent"
                 android:layout_height="46dp"
-                android:text="🛡️ Silinmeyi Engelle (Yönetici Yap)"
+                android:text="🛡️ Silinme Korumasını Etkinleştir"
                 android:textSize="13sp"
-                android:textColor="#FFFFFF"
-                android:backgroundTint="#0284C7" />
-        </LinearLayout>
-
-        <!-- ═══ DURUM KARTI ═══ -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@drawable/card_bg"
-            android:padding="18dp"
-            android:layout_marginBottom="16dp">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="SERVİS DURUMU"
-                android:textSize="11sp"
-                android:textColor="#94A3B8"
-                android:letterSpacing="0.1"
-                android:layout_marginBottom="8dp" />
-
-            <TextView
-                android:id="@+id/txtStatus"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="🔴 DURDURULDU"
-                android:textSize="17sp"
-                android:textColor="#DC2626"
+                android:textColor="@color/apple_label_primary"
                 android:textStyle="bold"
-                android:layout_marginBottom="14dp" />
+                android:backgroundTint="@color/apple_tertiary_background"
+                android:stateListAnimator="@null"
+                android:layout_marginBottom="16dp" />
 
-            <Button
-                android:id="@+id/btnToggle"
+            <View
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:text="▶ Servisi Başlat"
-                android:textSize="14sp"
-                android:textColor="#FFFFFF"
+                android:layout_height="1dp"
+                android:background="@color/apple_separator"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Pil Kısıtlaması -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Arka Plan Pil Optimizasyonu"
+                android:textSize="15sp"
+                android:textColor="@color/apple_label_primary"
                 android:textStyle="bold"
-                android:backgroundTint="#4F46E5" />
-        </LinearLayout>
-
-        <!-- ═══ PİL OPTİMİZASYONU KARTI ═══ -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@drawable/card_bg"
-            android:padding="18dp"
-            android:layout_marginBottom="16dp">
+                android:layout_marginBottom="4dp" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="⚡ PİL OPTİMİZASYONU"
-                android:textSize="11sp"
-                android:textColor="#94A3B8"
-                android:letterSpacing="0.1"
-                android:layout_marginBottom="6dp" />
-
-            <TextView
-                android:id="@+id/txtBatteryStatus"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="⚠️ Kontrol ediliyor..."
-                android:textSize="13sp"
-                android:textColor="#F59E0B"
-                android:layout_marginBottom="10dp" />
+                android:text="Android'in pil tasarrufu modu çağrı dinleme servisini durdurmaması için pil optimizasyonu istisnası tanımlanmalıdır."
+                android:textSize="12sp"
+                android:textColor="@color/apple_label_tertiary"
+                android:lineSpacingMultiplier="1.2"
+                android:layout_marginBottom="12dp" />
 
             <Button
                 android:id="@+id/btnBattery"
                 android:layout_width="match_parent"
-                android:layout_height="44dp"
+                android:layout_height="46dp"
                 android:text="⚡ Pil Kısıtlamasını Kaldır"
                 android:textSize="13sp"
-                android:textColor="#FFFFFF"
-                android:backgroundTint="#D97706" />
+                android:textColor="@color/apple_orange"
+                android:textStyle="bold"
+                android:backgroundTint="@color/apple_tertiary_background"
+                android:stateListAnimator="@null" />
         </LinearLayout>
 
-        <!-- ═══ SON ÇAĞRI KARTI ═══ -->
+        <!-- ═══  ADVANCED SERVER SETTINGS CARD (iOS Grouped Fields) ═══ -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:background="@drawable/card_bg"
-            android:padding="18dp"
+            android:padding="20dp"
             android:layout_marginBottom="16dp">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="SON ÇAĞRI &amp; KUYRUK"
+                android:text="GELİŞMİŞ BAĞLANTI AYARLARI"
                 android:textSize="11sp"
-                android:textColor="#94A3B8"
-                android:letterSpacing="0.1"
-                android:layout_marginBottom="6dp" />
+                android:textColor="@color/apple_label_secondary"
+                android:textStyle="bold"
+                android:letterSpacing="0.12"
+                android:layout_marginBottom="12dp" />
 
+            <!-- API URL Section -->
             <TextView
-                android:id="@+id/txtLastCall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Henüz çağrı algılanmadı"
-                android:textSize="14sp"
-                android:textColor="#E2E8F0"
-                android:layout_marginBottom="6dp" />
-
-            <TextView
-                android:id="@+id/txtQueueStatus"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Kuyruk: 0 bekleyen"
+                android:text="API Sunucu Adresi"
                 android:textSize="13sp"
-                android:textColor="#94A3B8"
+                android:textColor="@color/apple_label_secondary"
                 android:layout_marginBottom="4dp" />
-
-            <TextView
-                android:id="@+id/txtCallCount"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Toplam: 0 çağrı algılandı"
-                android:textSize="12sp"
-                android:textColor="#64748B" />
-        </LinearLayout>
-
-        <!-- ═══ MANUEL AYARLAR KARTI (İsteğe Bağlı) ═══ -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@drawable/card_bg"
-            android:padding="18dp"
-            android:layout_marginBottom="16dp">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="⚙️ MANUEL BAĞLANTI AYARLARI"
-                android:textSize="11sp"
-                android:textColor="#94A3B8"
-                android:letterSpacing="0.1"
-                android:layout_marginBottom="8dp" />
 
             <TextView
                 android:id="@+id/txtApiUrl"
@@ -290,42 +493,54 @@
                 android:layout_height="wrap_content"
                 android:text="https://bayi.mehmetdogrultd.com"
                 android:textSize="13sp"
-                android:textColor="#38BDF8"
+                android:textColor="@color/apple_blue"
+                android:textStyle="bold"
                 android:layout_marginBottom="8dp" />
 
             <EditText
                 android:id="@+id/editApiUrl"
                 android:layout_width="match_parent"
-                android:layout_height="44dp"
-                android:hint="API URL girin"
+                android:layout_height="46dp"
+                android:hint="https://bayi.mehmetdogrultd.com"
                 android:textSize="13sp"
-                android:textColor="#E2E8F0"
-                android:textColorHint="#475569"
+                android:textColor="@color/apple_label_primary"
+                android:textColorHint="@color/apple_label_tertiary"
                 android:background="@drawable/edit_bg"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
                 android:inputType="textUri"
-                android:layout_marginBottom="8dp" />
+                android:layout_marginBottom="10dp" />
 
-            <Button
-                android:id="@+id/btnSaveUrl"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="44dp"
-                android:text="💾 URL Kaydet"
-                android:textSize="13sp"
-                android:textColor="#FFFFFF"
-                android:backgroundTint="#059669"
-                android:layout_marginBottom="8dp" />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
 
-            <Button
-                android:id="@+id/btnTestApi"
-                android:layout_width="match_parent"
-                android:layout_height="44dp"
-                android:text="🔍 API Bağlantı Testi"
-                android:textSize="13sp"
-                android:textColor="#FFFFFF"
-                android:backgroundTint="#3B82F6"
-                android:layout_marginBottom="8dp" />
+                <Button
+                    android:id="@+id/btnSaveUrl"
+                    android:layout_width="0dp"
+                    android:layout_height="44dp"
+                    android:layout_weight="1"
+                    android:text="URL Kaydet"
+                    android:textSize="13sp"
+                    android:textColor="@color/apple_label_primary"
+                    android:backgroundTint="@color/apple_tertiary_background"
+                    android:stateListAnimator="@null"
+                    android:layout_marginEnd="6dp" />
+
+                <Button
+                    android:id="@+id/btnTestApi"
+                    android:layout_width="0dp"
+                    android:layout_height="44dp"
+                    android:layout_weight="1"
+                    android:text="Bağlantı Testi"
+                    android:textSize="13sp"
+                    android:textColor="@color/apple_blue"
+                    android:backgroundTint="@color/apple_blue_tint"
+                    android:stateListAnimator="@null"
+                    android:layout_marginStart="6dp" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/txtTestResult"
@@ -333,93 +548,108 @@
                 android:layout_height="wrap_content"
                 android:text=""
                 android:textSize="12sp"
-                android:textColor="#94A3B8"
+                android:textColor="@color/apple_label_secondary"
+                android:background="@drawable/pill_chip"
+                android:padding="10dp"
+                android:layout_marginBottom="14dp"
                 android:visibility="gone" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#334155"
-                android:layout_marginTop="12dp"
-                android:layout_marginBottom="12dp" />
+                android:background="@color/apple_separator"
+                android:layout_marginBottom="16dp" />
 
+            <!-- Device Token Section -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="CİHAZ ANAHTARI"
-                android:textSize="11sp"
-                android:textColor="#94A3B8"
-                android:letterSpacing="0.1"
-                android:layout_marginBottom="6dp" />
+                android:text="Cihaz Güvenlik Anahtarı"
+                android:textSize="13sp"
+                android:textColor="@color/apple_label_secondary"
+                android:layout_marginBottom="4dp" />
 
             <TextView
                 android:id="@+id/txtDeviceTokenStatus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="🔴 Tanımlı değil — çağrılar kaydedilemez"
+                android:text="Anahtar kontrol ediliyor..."
                 android:textSize="13sp"
-                android:textColor="#F87171"
+                android:textColor="@color/apple_red"
+                android:textStyle="bold"
                 android:layout_marginBottom="8dp" />
 
             <EditText
                 android:id="@+id/editDeviceToken"
                 android:layout_width="match_parent"
-                android:layout_height="44dp"
-                android:hint="Web panelden alınan cihaz anahtarı"
+                android:layout_height="46dp"
+                android:hint="MD-XXXX-XXXX-XXXX"
                 android:textSize="13sp"
-                android:textColor="#E2E8F0"
-                android:textColorHint="#475569"
+                android:textColor="@color/apple_label_primary"
+                android:textColorHint="@color/apple_label_tertiary"
                 android:background="@drawable/edit_bg"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
                 android:inputType="textPassword"
-                android:layout_marginBottom="8dp" />
+                android:layout_marginBottom="10dp" />
 
-            <Button
-                android:id="@+id/btnSaveDeviceToken"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="44dp"
-                android:text="🔐 Cihaz Anahtarını Kaydet"
-                android:textSize="13sp"
-                android:textColor="#FFFFFF"
-                android:backgroundTint="#059669"
-                android:layout_marginBottom="8dp" />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/btnVerifyDeviceToken"
-                android:layout_width="match_parent"
-                android:layout_height="44dp"
-                android:text="✅ Anahtarı Doğrula"
-                android:textSize="13sp"
-                android:textColor="#FFFFFF"
-                android:backgroundTint="#3B82F6" />
+                <Button
+                    android:id="@+id/btnSaveDeviceToken"
+                    android:layout_width="0dp"
+                    android:layout_height="44dp"
+                    android:layout_weight="1"
+                    android:text="Anahtarı Kaydet"
+                    android:textSize="13sp"
+                    android:textColor="@color/apple_label_primary"
+                    android:backgroundTint="@color/apple_tertiary_background"
+                    android:stateListAnimator="@null"
+                    android:layout_marginEnd="6dp" />
+
+                <Button
+                    android:id="@+id/btnVerifyDeviceToken"
+                    android:layout_width="0dp"
+                    android:layout_height="44dp"
+                    android:layout_weight="1"
+                    android:text="Doğrula"
+                    android:textSize="13sp"
+                    android:textColor="@color/apple_blue"
+                    android:backgroundTint="@color/apple_blue_tint"
+                    android:stateListAnimator="@null"
+                    android:layout_marginStart="6dp" />
+            </LinearLayout>
         </LinearLayout>
 
-        <!-- ═══ GÜNCELLEME KARTI ═══ -->
+        <!-- ═══  SOFTWARE UPDATE CARD ═══ -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:background="@drawable/card_bg"
-            android:padding="18dp"
-            android:layout_marginBottom="16dp">
+            android:padding="20dp"
+            android:layout_marginBottom="20dp">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="🔄 UYGULAMA GÜNCELLEME"
+                android:text="YAZILIM GÜNCELLEMESİ"
                 android:textSize="11sp"
-                android:textColor="#94A3B8"
-                android:letterSpacing="0.1"
-                android:layout_marginBottom="6dp" />
+                android:textColor="@color/apple_label_secondary"
+                android:textStyle="bold"
+                android:letterSpacing="0.12"
+                android:layout_marginBottom="8dp" />
 
             <TextView
                 android:id="@+id/txtAppVersionInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Sürüm: v1.0.0"
-                android:textSize="13sp"
-                android:textColor="#E2E8F0"
+                android:text="Sürüm: v2.0.3"
+                android:textSize="15sp"
+                android:textColor="@color/apple_label_primary"
                 android:textStyle="bold"
                 android:layout_marginBottom="4dp" />
 
@@ -427,40 +657,41 @@
                 android:id="@+id/txtUpdateStatus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Uygulama güncellemeleri otomatik olarak denetlenir."
+                android:text="Otomatik arka plan güncellemeleri etkin."
                 android:textSize="12sp"
-                android:textColor="#94A3B8"
-                android:layout_marginBottom="10dp" />
+                android:textColor="@color/apple_label_secondary"
+                android:layout_marginBottom="14dp" />
 
             <Button
                 android:id="@+id/btnCheckUpdate"
                 android:layout_width="match_parent"
-                android:layout_height="44dp"
+                android:layout_height="46dp"
                 android:text="🔄 Güncellemeleri Denetle"
                 android:textSize="13sp"
-                android:textColor="#FFFFFF"
-                android:backgroundTint="#6366F1" />
+                android:textColor="@color/apple_label_primary"
+                android:textStyle="bold"
+                android:backgroundTint="@color/apple_tertiary_background"
+                android:stateListAnimator="@null" />
         </LinearLayout>
 
-        <!-- Bilgi -->
+        <!-- ═══  FOOTER ═══ -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="ℹ️ Servis başlatıldıktan sonra uygulamayı kapatabilirsiniz. Arka planda kesintisiz çalışmaya devam eder. Telefon yeniden başlatılsa dahi otomatik açılır."
+            android:text="Servis başlatıldıktan sonra uygulama kapatılabilir. Telefon yeniden başlatılsa bile santral dinleme ve arama aktarımı otomatik olarak arka planda devam eder."
             android:textSize="11.5sp"
-            android:textColor="#475569"
+            android:textColor="@color/apple_label_tertiary"
             android:lineSpacingMultiplier="1.3"
             android:gravity="center"
-            android:layout_marginTop="4dp" />
+            android:layout_marginBottom="8dp" />
 
         <TextView
+            android:id="@+id/txtFooterVersion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/txtFooterVersion"
-            android:text="Doğru CRM Çağrı Takip v1.0.0"
+            android:text="Doğru CRM Çağrı Takip v2.0.3"
             android:textSize="11sp"
-            android:textColor="#334155"
-            android:gravity="center"
-            android:layout_marginTop="12dp" />
+            android:textColor="@color/apple_label_quaternary"
+            android:gravity="center" />
     </LinearLayout>
 </ScrollView>

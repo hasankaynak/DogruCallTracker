@@ -323,8 +323,26 @@ object ApiService {
                         when (response.code) {
                             in 200..299 -> {
                                 val bodyStr = response.body?.string()
+                                var uiLocked = false
+
+                                if (!bodyStr.isNullOrBlank()) {
+                                    try {
+                                        val json = JSONObject(bodyStr)
+                                        uiLocked = json.optBoolean("ui_locked", false)
+                                        if (json.has("device")) {
+                                            val devObj = json.optJSONObject("device")
+                                            if (devObj != null && devObj.has("ui_locked")) {
+                                                uiLocked = devObj.optBoolean("ui_locked", uiLocked)
+                                            }
+                                        }
+                                    } catch (_: Exception) {}
+                                }
+
                                 context.getSharedPreferences("calltracker", Context.MODE_PRIVATE)
-                                    .edit().putBoolean("is_device_passive", false).apply()
+                                    .edit()
+                                    .putBoolean("is_device_passive", false)
+                                    .putBoolean("ui_locked", uiLocked)
+                                    .apply()
 
                                 if (!bodyStr.isNullOrBlank()) {
                                     try {

@@ -17,6 +17,7 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -42,6 +43,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var txtAdminStatus: TextView
     private lateinit var btnAdmin: Button
     private lateinit var cardPassiveAlert: LinearLayout
+    private var cardUiLocked: LinearLayout? = null
 
     private val PERMISSIONS_REQUEST = 1001
     private val BATTERY_OPTIMIZATION_REQUEST = 1002
@@ -90,6 +92,7 @@ class MainActivity : AppCompatActivity() {
             txtAdminStatus = findViewById(R.id.txtAdminStatus) ?: return false
             btnAdmin = findViewById(R.id.btnAdmin) ?: return false
             cardPassiveAlert = findViewById(R.id.cardPassiveAlert) ?: return false
+            cardUiLocked = findViewById(R.id.cardUiLocked)
             true
         } catch (e: Exception) {
             Log.e("MainActivity", "bindViews error: " + e.message, e)
@@ -185,14 +188,14 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btnVerifyDeviceToken).setOnClickListener {
             val status = findViewById<TextView>(R.id.txtDeviceTokenStatus)
             status.text = "⏳ Doğrulanıyor…"
-            status.setTextColor(0xFF94A3B8.toInt())
+            status.setTextColor(0xFF8E8E93.toInt())
             ApiService.verifyDeviceToken(this) { ok, message ->
                 if (ok) {
                     status.text = "🟢 Geçerli — ${SecureStore.maskedDeviceToken(this)}"
-                    status.setTextColor(0xFF34D399.toInt())
+                    status.setTextColor(0xFF30D158.toInt())
                 } else {
                     status.text = "🔴 $message"
-                    status.setTextColor(0xFFF87171.toInt())
+                    status.setTextColor(0xFFFF453A.toInt())
                 }
                 updateUI()
             }
@@ -215,14 +218,14 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btnCheckUpdate).setOnClickListener {
             val updateStatus = findViewById<TextView>(R.id.txtUpdateStatus)
             updateStatus.text = "⏳ GitHub Releases kontrol ediliyor..."
-            updateStatus.setTextColor(0xFF94A3B8.toInt())
+            updateStatus.setTextColor(0xFF8E8E93.toInt())
             UpdateManager.checkForUpdates(this, isManual = true) { hasUpdate ->
                 if (!hasUpdate) {
                     updateStatus.text = "✅ Sürümünüz güncel (v${BuildConfig.VERSION_NAME})"
-                    updateStatus.setTextColor(0xFF34D399.toInt())
+                    updateStatus.setTextColor(0xFF30D158.toInt())
                 } else {
                     updateStatus.text = "🚀 Yeni sürüm mevcut! Kurulum penceresi açıldı."
-                    updateStatus.setTextColor(0xFF60A5FA.toInt())
+                    updateStatus.setTextColor(0xFF0A84FF.toInt())
                 }
             }
         }
@@ -249,6 +252,11 @@ class MainActivity : AppCompatActivity() {
         updateUI()
         refreshQueueStatus()
         ApiService.drainQueue(this)
+        ApiService.verifyDeviceToken(this) { _, _ ->
+            runOnUiThread {
+                updateUI()
+            }
+        }
     }
 
     /**
@@ -292,14 +300,14 @@ class MainActivity : AppCompatActivity() {
 
             val statusView = findViewById<TextView>(R.id.txtDeviceTokenStatus)
             statusView.text = "⏳ QR Kod tanımlandı, anahtar doğrulanıyor..."
-            statusView.setTextColor(0xFF38BDF8.toInt())
+            statusView.setTextColor(0xFF0A84FF.toInt())
 
             Toast.makeText(this, "✅ QR Kod okundu! Sunucuyla doğrulanıyor...", Toast.LENGTH_SHORT).show()
 
             ApiService.verifyDeviceToken(this) { ok, message ->
                 if (ok) {
                     statusView.text = "🟢 Doğrulandı — ${SecureStore.maskedDeviceToken(this)}"
-                    statusView.setTextColor(0xFF34D399.toInt())
+                    statusView.setTextColor(0xFF30D158.toInt())
                     Toast.makeText(this, "🎉 Harika! Cihaz başarıyla eşleştirildi ve aktif edildi.", Toast.LENGTH_LONG).show()
                     if (hasAllPermissions()) {
                         startCallService()
@@ -308,7 +316,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 } else {
                     statusView.text = "🔴 $message"
-                    statusView.setTextColor(0xFFF87171.toInt())
+                    statusView.setTextColor(0xFFFF453A.toInt())
                     Toast.makeText(this, "⚠️ $message", Toast.LENGTH_LONG).show()
                 }
                 updateUI()
@@ -389,15 +397,15 @@ class MainActivity : AppCompatActivity() {
                 when {
                     abandoned > 0 -> {
                         view.text = "⚠️ Kuyruk: $pending bekleyen, $abandoned gönderilemedi"
-                        view.setTextColor(0xFFF87171.toInt())
+                        view.setTextColor(0xFFFF453A.toInt())
                     }
                     pending > 0 -> {
                         view.text = "⏳ Kuyruk: $pending çağrı gönderilmeyi bekliyor"
-                        view.setTextColor(0xFFFBBF24.toInt())
+                        view.setTextColor(0xFFFF9F0A.toInt())
                     }
                     else -> {
                         view.text = "✅ Kuyruk boş — tüm çağrılar iletildi"
-                        view.setTextColor(0xFF34D399.toInt())
+                        view.setTextColor(0xFF30D158.toInt())
                     }
                 }
             }
@@ -410,14 +418,14 @@ class MainActivity : AppCompatActivity() {
             val isPassive = getSharedPreferences("calltracker", MODE_PRIVATE).getBoolean("is_device_passive", false)
             if (isPassive) {
                 status.text = "🔴 PASİFE ALINDI — ${SecureStore.maskedDeviceToken(this)}"
-                status.setTextColor(0xFFF87171.toInt())
+                status.setTextColor(0xFFFF453A.toInt())
             } else {
                 status.text = "🟢 Tanımlı — ${SecureStore.maskedDeviceToken(this)}"
-                status.setTextColor(0xFF34D399.toInt())
+                status.setTextColor(0xFF30D158.toInt())
             }
         } else {
             status.text = "🔴 Tanımlı değil — QR okutun veya anahtar girin"
-            status.setTextColor(0xFFF87171.toInt())
+            status.setTextColor(0xFFFF453A.toInt())
         }
     }
 
@@ -466,7 +474,7 @@ class MainActivity : AppCompatActivity() {
         val txtResult = findViewById<TextView>(R.id.txtTestResult)
         txtResult.visibility = android.view.View.VISIBLE
         txtResult.text = "⏳ API'ye bağlanılıyor..."
-        txtResult.setTextColor(0xFFF59E0B.toInt())
+        txtResult.setTextColor(0xFFFF9F0A.toInt())
 
         val prefs = getSharedPreferences("calltracker", MODE_PRIVATE)
         val apiUrl = prefs.getString("api_url", "https://bayi.mehmetdogrultd.com") ?: "https://bayi.mehmetdogrultd.com"
@@ -497,11 +505,11 @@ class MainActivity : AppCompatActivity() {
                     when {
                         statusCode in 200..299 -> {
                             txtResult.text = "✅ API BAĞLANTI BAŞARILI!\n\nURL: $apiUrl\nStatus: $statusCode"
-                            txtResult.setTextColor(0xFF059669.toInt())
+                            txtResult.setTextColor(0xFF30D158.toInt())
                         }
                         statusCode == 403 -> {
                             txtResult.text = "🔴 DİKKAT: CİHAZ CRM'DEN PASİFE ALINMIŞTIR!\n\nURL: $apiUrl\nCihaz durumu pasiftir, aramalar kabul edilmez."
-                            txtResult.setTextColor(0xFFDC2626.toInt())
+                            txtResult.setTextColor(0xFFFF453A.toInt())
                         }
                         statusCode == 401 -> {
                             val anahtarVar = SecureStore.hasDeviceToken(this@MainActivity)
@@ -510,18 +518,18 @@ class MainActivity : AppCompatActivity() {
                             } else {
                                 "🔑 SUNUCUYA ULAŞILDI — CİHAZ ANAHTARI YOK\n\nURL: $apiUrl\nLütfen yukarıdaki 'QR Kod Tara' butonu ile cihazınızı eşleştirin."
                             }
-                            txtResult.setTextColor(0xFF3B82F6.toInt())
+                            txtResult.setTextColor(0xFF0A84FF.toInt())
                         }
                         else -> {
                             txtResult.text = "⚠️ API YANIT VERDİ AMA HATA!\n\nURL: $apiUrl\nStatus: $statusCode\nYanıt: ${responseBody.take(200)}"
-                            txtResult.setTextColor(0xFFF59E0B.toInt())
+                            txtResult.setTextColor(0xFFFF9F0A.toInt())
                         }
                     }
                 }
             } catch (e: Exception) {
                 runOnUiThread {
                     txtResult.text = "❌ BAĞLANTI HATASI!\n\nSunucu: $apiUrl\nDetay: ${e.message}"
-                    txtResult.setTextColor(0xFFDC2626.toInt())
+                    txtResult.setTextColor(0xFFFF453A.toInt())
                 }
             }
         }.start()
@@ -548,36 +556,85 @@ class MainActivity : AppCompatActivity() {
         val callCount = prefs.getInt("call_count", 0)
         val batteryIgnored = isBatteryOptimizationIgnored()
 
-        txtStatus.text = if (running) "🟢 AKTİF — Çağrılar dinleniyor" else "🔴 DURDURULDU"
-        txtStatus.setTextColor(if (running) 0xFF059669.toInt() else 0xFFDC2626.toInt())
+        txtStatus.text = if (running) "🟢 AKTİF — Çağrılar Dinleniyor" else "🔴 DURDURULDU"
+        txtStatus.setTextColor(if (running) 0xFF30D158.toInt() else 0xFFFF453A.toInt())
         txtLastCall.text = lastCall
-        txtCallCount.text = "Toplam: $callCount çağrı algılandı"
+        txtCallCount.text = "$callCount çağrı"
         btnToggle.text = if (running) "🔒 Servis Aktif (Merkezi Korumalı)" else "▶ Servisi Başlat"
+        if (running) {
+            btnToggle.backgroundTintList = android.content.res.ColorStateList.valueOf(0xFF1A2B42.toInt())
+            btnToggle.setTextColor(0xFF0A84FF.toInt())
+        } else {
+            btnToggle.backgroundTintList = android.content.res.ColorStateList.valueOf(0xFF0A84FF.toInt())
+            btnToggle.setTextColor(0xFFFFFFFF.toInt())
+        }
 
         // Pil durumu
         txtBatteryStatus.text = if (batteryIgnored) {
-            "✅ Pil optimizasyonu devre dışı — Arka planda çalışacak"
+            "✅ Pil kısıtlaması kaldırıldı (Arka planda kesintisiz)"
         } else {
-            "⚠️ Pil optimizasyonu aktif — Servis durdurulabilir!"
+            "⚠️ Pil kısıtlaması aktif (Servis uyutulabilir)"
         }
-        txtBatteryStatus.setTextColor(if (batteryIgnored) 0xFF059669.toInt() else 0xFFF59E0B.toInt())
+        txtBatteryStatus.setTextColor(if (batteryIgnored) 0xFF30D158.toInt() else 0xFFFF9F0A.toInt())
 
         // Cihaz Yöneticisi Koruması
         val isAdmin = dpm.isAdminActive(adminComponent)
         if (isAdmin) {
-            txtAdminStatus.text = "🛡️ Silinmeye Karşı Koruma Aktif (Kaldırılamaz)"
-            txtAdminStatus.setTextColor(0xFF059669.toInt())
+            txtAdminStatus.text = "🛡️ Silinmeye Karşı Koruma Açık"
+            txtAdminStatus.setTextColor(0xFF30D158.toInt())
             btnAdmin.text = "🛡️ Silinme Koruması Aktif (Korumalı)"
-            btnAdmin.backgroundTintList = android.content.res.ColorStateList.valueOf(0xFF059669.toInt())
+            btnAdmin.backgroundTintList = android.content.res.ColorStateList.valueOf(0xFF173822.toInt())
+            btnAdmin.setTextColor(0xFF30D158.toInt())
         } else {
-            txtAdminStatus.text = "⚠️ Silinme Koruması Pasif — Lütfen etkinleştirin"
-            txtAdminStatus.setTextColor(0xFFF59E0B.toInt())
+            txtAdminStatus.text = "⚠️ Koruma Pasif — Uygulama silinebilir"
+            txtAdminStatus.setTextColor(0xFFFF9F0A.toInt())
             btnAdmin.text = "🛡️ Silinme Korumasını Etkinleştir"
-            btnAdmin.backgroundTintList = android.content.res.ColorStateList.valueOf(0xFF4F46E5.toInt())
+            btnAdmin.backgroundTintList = android.content.res.ColorStateList.valueOf(0xFF2C2C2E.toInt())
+            btnAdmin.setTextColor(0xFFFFFFFF.toInt())
         }
 
         // Pasif Cihaz Bildirim Kartı
         val isPassive = prefs.getBoolean("is_device_passive", false)
         cardPassiveAlert.visibility = if (isPassive) android.view.View.VISIBLE else android.view.View.GONE
+
+        // 🔒 E-Katalog Yönetici Buton Kilidi Kontrolü
+        applyUiLockState()
+    }
+
+    /**
+     * E-Katalog Yönetici Kilidi:
+     * Panelden kilitlendiğinde personelin butonlara ve ayarlara müdahalesi engellenir.
+     */
+    private fun applyUiLockState() {
+        val prefs = getSharedPreferences("calltracker", MODE_PRIVATE)
+        val isLocked = prefs.getBoolean("ui_locked", false)
+
+        cardUiLocked?.visibility = if (isLocked) android.view.View.VISIBLE else android.view.View.GONE
+        cardUiLocked?.setOnClickListener {
+            AlertDialog.Builder(this)
+                .setTitle("🔒 Yönetici Kilidi Aktif")
+                .setMessage("Bu cihazın ayarları ve kontrolleri E-Katalog yönetim panelinden kilitlenmiştir.\n\nYetkisiz personel müdahalesi engellenmiştir. Ayarları değiştirmek veya servisi yönetmek için E-Katalog / CRM Cihazlar panelinden buton kilidini açınız.")
+                .setPositiveButton("Tamam", null)
+                .show()
+        }
+
+        val viewsToLock = listOf<View?>(
+            btnToggle,
+            btnAdmin,
+            findViewById<Button>(R.id.btnScanQr),
+            findViewById<Button>(R.id.btnSaveUrl),
+            findViewById<EditText>(R.id.editApiUrl),
+            findViewById<Button>(R.id.btnSaveDeviceToken),
+            findViewById<EditText>(R.id.editDeviceToken),
+            findViewById<Button>(R.id.btnVerifyDeviceToken),
+            findViewById<Button>(R.id.btnBattery),
+            findViewById<Button>(R.id.btnTestApi),
+            findViewById<Button>(R.id.btnCheckUpdate)
+        )
+
+        for (v in viewsToLock) {
+            v?.isEnabled = !isLocked
+            v?.alpha = if (isLocked) 0.45f else 1.0f
+        }
     }
 }
